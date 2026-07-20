@@ -33,3 +33,10 @@ variable "app_port" {
   description = "The port the application listens on"
   default     = 80
 }
+
+variable "huggingface_api_token" {
+  type        = string
+  description = "The Hugging Face API token for inference"
+  default     = ""
+  sensitive   = true
+}

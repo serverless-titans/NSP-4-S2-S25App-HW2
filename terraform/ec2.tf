@@ -83,6 +83,7 @@ After=network.target
 Type=simple
 User=root
 WorkingDirectory=/opt/app
+Environment="HUGGINGFACE_API_TOKEN=${var.huggingface_api_token}"
 ExecStart=/opt/app/server
 Restart=on-failure
 
