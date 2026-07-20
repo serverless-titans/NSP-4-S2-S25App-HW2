@@ -1,4 +1,4 @@
-aws_region         = "us-east-1"
+aws_region         = "ap-south-2"
 project_name       = "hw2-staging"
 vpc_cidr           = "10.20.0.0/16"
 public_subnet_cidr = "10.20.1.0/24"
