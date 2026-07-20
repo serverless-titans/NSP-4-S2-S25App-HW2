@@ -27,10 +27,6 @@ type responsePayload struct {
 	Source      string `json:"source"`
 }
 
-type hfRequest struct {
-	Inputs string `json:"inputs"`
-}
-
 type hfResponse struct {
 	GeneratedText string `json:"generated_text"`
 }
@@ -65,10 +61,10 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{
+	_ = json.NewEncoder(w).Encode(map[string]string{
 		"status":      "ok",
 		"environment": "staging",
 	})
@@ -87,23 +83,23 @@ func generateHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Method not allowed"})
+		_ = json.NewEncoder(w).Encode(map[string]string{"error": "Method not allowed"})
 		return
 	}
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to read body"})
+		_ = json.NewEncoder(w).Encode(map[string]string{"error": "Failed to read body"})
 		return
 	}
-	defer r.Body.Close()
+	defer func() { _ = r.Body.Close() }()
 
 	payload, err := parsePayload(string(body))
 	if err != nil {
 		log.Printf("Error parsing payload: %v", err)
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		_ = json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
 		return
 	}
 
@@ -111,12 +107,12 @@ func generateHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Error generating answer: %v", err)
 		w.WriteHeader(http.StatusBadGateway)
-		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		_ = json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(responsePayload{
+	_ = json.NewEncoder(w).Encode(responsePayload{
 		Application: "NSP-4-S2-S25App - v1.1 - EC2 Staging",
 		Prompt:      payload.Prompt,
 		Response:    answer,
@@ -278,7 +274,7 @@ func performHFRequest(
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -319,7 +315,7 @@ func fetchTypefitQuote(ctx context.Context) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	var quotes []struct {
 		Text string `json:"text"`
@@ -346,7 +342,7 @@ func fetchQuote(ctx context.Context) (string, string, error) {
 	if err != nil {
 		return "", "", err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return "", "", fmt.Errorf("zenquotes API returned HTTP %d", resp.StatusCode)

@@ -31,6 +31,7 @@ resource "aws_iam_instance_profile" "app_profile" {
 }
 
 resource "aws_instance" "app" {
+  # checkov:skip=CKV_AWS_88: EC2 instance needs a public IP per assignment requirements
   ami                         = data.aws_ami.amazon_linux.id
   instance_type               = var.instance_type
   subnet_id                   = aws_subnet.public.id
