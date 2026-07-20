@@ -1,8 +1,7 @@
-# Flow Log requires a CloudWatch Log Group and IAM Role
-# checkov:skip=CKV_AWS_158: KMS encryption not required for staging flow logs
 resource "aws_cloudwatch_log_group" "flow_log" {
+  # checkov:skip=CKV_AWS_158: KMS encryption not required for staging flow logs
   name              = "/aws/vpc/flow-log/${var.project_name}"
-  retention_in_days = 7
+  retention_in_days = 365
 }
 
 resource "aws_iam_role" "flow_log_role" {
@@ -38,7 +37,7 @@ resource "aws_iam_role_policy" "flow_log_policy" {
           "logs:DescribeLogStreams"
         ]
         Effect   = "Allow"
-        Resource = "*"
+        Resource = "arn:aws:logs:*:*:log-group:/aws/vpc/flow-log/${var.project_name}:*"
       }
     ]
   })
