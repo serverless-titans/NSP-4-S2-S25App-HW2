@@ -68,6 +68,8 @@ cat << 'APP_EOF' > main.go
 ${file("${path.module}/../app/main.go")}
 APP_EOF
 
+export HOME=/root
+export GOCACHE=/root/.cache/go-build
 go mod init nsp-app
 go build -o server main.go
 
