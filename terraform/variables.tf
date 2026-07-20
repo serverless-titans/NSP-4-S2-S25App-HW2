@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "project_name" {
   type        = string
   description = "The name of the project"
-  default     = "hw2-staging"
+  default     = "hw2-staging-v2"
 }
 
 variable "vpc_cidr" {
